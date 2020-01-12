@@ -3,14 +3,16 @@
     - Read hooks documentation
     - Refacto Existing objects to use hooks
     - Finish the api video
-    - 
+    - Finish Router video
+    - Finish Openclassrooms
 
 
 # React
 
     In progress - Hooks
     
-    Unclear: Composition vs inheritance
+    Unclear - Composition vs inheritance
+    Unclear - Interfaces
 
     Done - History
     Done - Web components
@@ -34,12 +36,16 @@
     Done - Theory Documentation : https://reactjs.org/docs/getting-started.html
     Done - TicTacToc Tutorial : https://reactjs.org/docs/getting-started.html
     
-    Done - Youtube: Why Hooks: https://www.youtube.com/watch?v=eX_L39UvZes&t=536s
-    Done - Youtube: Hooks in 15 minuteshttps://www.youtube.com/watch?v=d9Pndaq9MJs
-    
+    Viewed - Youtube: Why Hooks: => https://www.youtube.com/watch?v=eX_L39UvZes&t=536s
+    Viewed - Youtube: Hooks in 15 minutes => https://www.youtube.com/watch?v=d9Pndaq9MJs
+    Viewed - Youtube: React router dom tutorial => https://www.youtube.com/watch?v=110dW3l5GQY
 
 
 # Tools
 
     Fontawsome: https://fontawesome.com/
     Bulma: https://bulma.io/
+
+# Questions
+
+    Switch dans Browser Router? Il se passe quoi si on l enleve?
