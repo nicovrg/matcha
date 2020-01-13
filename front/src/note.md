@@ -6,10 +6,7 @@
 
 # React
 
-    In progress - Hooks
-    
     Unclear - Composition vs inheritance
-    Unclear - Interfaces
 
     Done - History
     Done - Web components
@@ -25,16 +22,18 @@
     Done - Passing a function as callback from parent to child component
     Done - Lift state
     Done - Routes {react router dom}
+    In progress - Hooks
 
 
 ## Ressources
 
-    In progress - Openclassroom Tutorial : https://openclassrooms.com/fr/courses/4286486-build-web-apps-with-reactjs
     
-    Done - Theory Documentation : https://reactjs.org/docs/getting-started.html
-    Done - TicTacToc Tutorial : https://reactjs.org/docs/getting-started.html
-    Done - Finish Openclassrooms
-    
+    Done - React Tutorial : https://reactjs.org/docs/getting-started.html
+    Done - React Documentation : https://reactjs.org/docs/getting-started.html
+    Done - Hook Documentation https://reactjs.org/docs/hooks-intro.html
+    Done - Openclassroom Tutorial : https://openclassrooms.com/fr/courses/4286486-build-web-apps-with-reactjs
+
+
     Viewed - Youtube: Why Hooks: => https://www.youtube.com/watch?v=eX_L39UvZes&t=536s
     Viewed - Youtube: Hooks in 15 minutes => https://www.youtube.com/watch?v=d9Pndaq9MJs
     Viewed - Youtube: React router dom tutorial => https://www.youtube.com/watch?v=110dW3l5GQY
@@ -45,8 +44,6 @@
     Bulma: https://bulma.io/
 
 # Questions
-
-    Switch dans Browser Router? Il se passe quoi si on l enleve?
 
     this.setState((prevState, props) => ({
       color: prevState.color === 'red' ? 'blue' : 'red'
