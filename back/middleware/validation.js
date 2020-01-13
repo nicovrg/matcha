@@ -13,11 +13,13 @@ const required = (value, required) => {
 		return true;
 }
 
+// TODO: Fix validation
+
 const validate = (shema, data) => {
 	for (const property in shema) {
 		for (const value in property) {
 			if (!window[value](data.value, shema.property))
-				throw new Error({error: shema.error}); 
+				return { message: shema.error }; 
 		};
 	};
 }

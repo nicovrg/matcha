@@ -1,7 +1,6 @@
 class Model {
-	constructor (shema) {
-		this.shema = shema;
-		this.methods = {};
+	constructor (Schema) {
+		this.Schema = Schema;
 	}
 }
 
