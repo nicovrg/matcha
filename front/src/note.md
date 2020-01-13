@@ -2,9 +2,6 @@
 
     - Read hooks documentation
     - Refacto Existing objects to use hooks
-    - Finish the api video
-    - Finish Router video
-    - Finish Openclassrooms
 
 
 # React
@@ -25,6 +22,7 @@
     Done - Virtual dom
     Done - Object syntax {constructor, binding, weird vanilla js}
     Done - Function syntax {}
+    Done - Passing a function as callback from parent to child component
     Done - Lift state
     Done - Routes {react router dom}
 
@@ -35,11 +33,11 @@
     
     Done - Theory Documentation : https://reactjs.org/docs/getting-started.html
     Done - TicTacToc Tutorial : https://reactjs.org/docs/getting-started.html
+    Done - Finish Openclassrooms
     
     Viewed - Youtube: Why Hooks: => https://www.youtube.com/watch?v=eX_L39UvZes&t=536s
     Viewed - Youtube: Hooks in 15 minutes => https://www.youtube.com/watch?v=d9Pndaq9MJs
     Viewed - Youtube: React router dom tutorial => https://www.youtube.com/watch?v=110dW3l5GQY
-
 
 # Tools
 
@@ -49,3 +47,9 @@
 # Questions
 
     Switch dans Browser Router? Il se passe quoi si on l enleve?
+
+    this.setState((prevState, props) => ({
+      color: prevState.color === 'red' ? 'blue' : 'red'
+    }));
+
+    let productsAsArray = Object.keys(this.props.products).map((pid) => this.props.products[pid]);
