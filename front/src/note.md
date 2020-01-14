@@ -1,10 +1,16 @@
 # Todo
 
-	- Read hooks documentation
-	- Refacto Existing objects to use hooks
 
-	Done - useState
-	Done - useEffect
+	################### IN PROGRESS ###################
+	
+# React Hooks
+
+	Ok - Read hooks documentation
+	- Refacto Existing objects to use hooks
+	- Read https://overreacted.io/a-complete-guide-to-useeffect/
+
+	Ok - useState
+	Ok - useEffect
 	
 	- useContext
 	- useReducer
@@ -16,25 +22,28 @@
 	- useDebugValue
 	- useCustom (custom hook)
 
-# React Class Components
 
+	################### DONE ###################
+
+# React Native
+
+	Ok - History {2013 - facebook - opensource - active and huge community}
+	Ok - Web components {a new design}
+	Ok - Jsx and rendering {html in javascript}
+	Ok - Conditional rendering {render what you need for a context}
+	Ok - State and lifecycle {top => bottom: state become props}
+	Ok - State and lifecycle {bottom => top: pass callback from parent to child component}
+	Ok - List and keys {allow react self organize better than with basic index}
+	Ok - Virtual dom {abstract render managment}
+	Ok - Function syntax {render "basic" component without state}
+	Ok - Object syntax {create logic components => constructor, binding, this scope}
+	Ok - Render props {sharing code between components using a prop whose value is a function}
+	Ok - Lift state / higher order component {better design pattern}
+	Ok - Routes {navigate in the app: react router dom}
+	
+	Unclear - Hooks {a new design pattern}
 	Unclear - Composition vs inheritance
 
-	Done - History {2013 - facebook - opensource - active and huge community}
-	Done - Web components {a new design}
-	Done - Jsx and rendering {better than <?= =>}
-	Done - Conditional rendering {render what you need for a context}
-	Done - State and lifecycle {top => bottom: state become props}
-	Done - State and lifecycle {bottom => top: pass callback from parent to child component}
-	Done - List and keys {allow react self organize better than with basic index}
-	Done - Virtual dom {abstract render managment}
-	Done - Function syntax {render "basic" component without state}
-	Done - Object syntax {create logic components => constructor, binding, this scope}
-	Done - Lift state {better design pattern}
-	Done - Routes {navigate in the app: react router dom}
-	Done - Hooks {a new design pattern}
-
-# React Hooks
 
 
 ## Ressources
