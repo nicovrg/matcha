@@ -1,5 +1,6 @@
 # Todo
-
+	Inscription
+	Login
 
 	################### IN PROGRESS ###################
 	
@@ -27,7 +28,7 @@
 
 	################### DONE ###################
 
-# React Native
+# React Basic
 
 	Ok - History {2013 - facebook - opensource - active and huge community}
 	Ok - Web components {a new design}
