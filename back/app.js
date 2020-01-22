@@ -9,6 +9,8 @@ import 'dotenv/config';
 
 import { logErrors, clientErrorHandler, errorHandler } from './middleware/errors';
 
+import userRouter from './routes/user';
+
 var app = express();
 
 app.use(logger('dev'));
@@ -17,10 +19,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/user', userRouter);
+
 app.use(logErrors);
 app.use(clientErrorHandler);
 app.use(errorHandler);
-
-app.use('/user', /* LOL */);
 
 module.exports = app;
