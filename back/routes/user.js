@@ -2,41 +2,51 @@ import { Router } from 'express';
 import auth from '../middleware/auth';
 
 import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll } from '../models/user';
+import { ErrorHandler } from '../middleware/errors';
 
 const userRouter = Router();
 
-userRouter.post('/', async (req, res) => {
-	const user = {
-		email: req.body.email,
-		username: req.body.username,
-		password: req.body.password
+userRouter.post('/', async (req, res, next) => {
+	try {
+		const user = {
+			email: req.body.email,
+			username: req.body.username,
+			password: req.body.password
+		}
+		if (!user.email || !user.user || !user.password) throw new ErrorHandler(400, 'Missing required fields');
+		if (await userExists(user)) throw new ErrorHandler(400, 'User already exists');
+		registerUser(user);
+		res.status(200).json({success: true})
+	} catch (err) {
+		next(err);
 	}
-	if (await userExists(user)) return res.status(400).json({message: 'user already exists'});
-	
-	registerUser(user);
-	res.status(200).json({success: true});
 });
 
-userRouter.post('/login', async (req, res) => {
-	const {email, password} = req.body;
-	const user = await findByCreditentials(email, password);
-	if (!user) return res.status(401).json({error: 'Login failed! Check authentication credentials'});
-	const token = await generateAuthToken(user);
-	return res.status(200).json({user, token});
+userRouter.post('/login', async (req, res, next) => {
+	try {
+		const {email, password} = req.body;
+		if (!email || !password) throw new ErrorHandler(400, 'Missing required fields');
+		const user = await findByCreditentials(email, password);
+		if (!user) throw new ErrorHandler(401, 'Login failed! Check authentication credentials');
+		const token = await generateAuthToken(user);
+		return res.status(200).json({user, token});
+	} catch (err) {
+		next(err);
+	}
 });
 
 userRouter.get('/me', auth, async (req, res) => {
-	res.json(req.user);
+		res.status(200).json(req.user);
 })
 
 userRouter.post('/logout', auth, async (req, res) => {
 	await logoutUser(req.token);
-	res.json({success: true});
+	res.status(200).json({success: true});
 })
 
 userRouter.post('/logout/all', auth, async (req, res) => {
 	await logoutAll(req.user);
-	res.json({success: true});
+	res.status(200).json({success: true});
 })
 
 export default userRouter;

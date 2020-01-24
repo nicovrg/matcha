@@ -44,14 +44,18 @@ export const findByCreditentials = async (email, password) => {
 	const query = 'MATCH (u:User) WHERE u.email = $email RETURN u';
 	const user = await dbSession.session.run(query, {email, password}).then(res => {
 		closeBridge(dbSession);
-		let {_id, username, email, password} = res.records[0]._fields[0].properties;
-		const user = {_id, username, email, password};
-		return user;
+		if (res.records.length)
+		{
+			let {_id, username, email, password} = res.records[0]._fields[0].properties;
+			const user = {_id, username, email, password};
+			return user;
+		}
+		return null;
 	}).catch (e => {
 		console.log(e);
 	})
 	if (!user || !await bcrypt.compare(password, user.password))
-		throw new Error('Invalid Creditentials');
+		return false;
 	else
 		return user;
 }

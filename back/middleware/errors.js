@@ -1,22 +1,21 @@
-const logErrors = (err, req, res, next) => {
-	console.error(err.stack);
-	next(err);
-};
-
-const clientErrorHandler = (err, req, res, next) => {
-	if (req.xhr) {
-		res.status(500).json({ error: 'Fatal error' });
-	} else {
-		next(err);
+class ErrorHandler extends Error {
+	constructor(statusCode, message) {
+	  super();
+	  this.statusCode = statusCode;
+	  this.message = message;
 	}
-};
+}
 
-const errorHandler = (err, req, res, next) => {
-	res.status(500).json({ error: err });
+const handleError = (err, req, res, next) => {
+	const { statusCode, message } = err;
+	res.status(statusCode).json({
+	  status: "error",
+	  statusCode,
+	  message
+	});
 };
 
 export {
-	logErrors,
-	clientErrorHandler,
-	errorHandler
+	ErrorHandler,
+	handleError
 };
