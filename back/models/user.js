@@ -57,7 +57,10 @@ export const findByCreditentials = async (email, password) => {
 	if (!user || !await bcrypt.compare(password, user.password))
 		return false;
 	else
+	{
+		delete user.password;
 		return user;
+	}
 }
 
 export const generateAuthToken = async (user) => {
