@@ -11,15 +11,18 @@ import { logErrors, clientErrorHandler, errorHandler } from './middleware/errors
 
 import userRouter from './routes/user';
 
+import genderRouter from './routes/gender';
+
 var app = express();
 
 app.use(logger('dev'));
 app.use(cors());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/user', userRouter);
+app.use('/gender', genderRouter);
 
 app.use(logErrors);
 app.use(clientErrorHandler);
