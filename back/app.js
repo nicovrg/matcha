@@ -1,4 +1,5 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import path from 'path';
 import cookieParser from 'cookie-parser';
 import logger from 'morgan';
