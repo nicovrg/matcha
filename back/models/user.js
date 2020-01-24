@@ -32,7 +32,7 @@ export const verifyUser = async (_id, token) => {
 	return await dbSession.session.run(query, {_id, token}).then(res => {
 		closeBridge(dbSession);
 		let {_id, username, email, password} = res.records[0]._fields[0].properties;
-		const user = {_id, username, email, password};
+		const user = {_id, username, email};
 		return user;
 	}).catch (e => {
 		console.log(e);
