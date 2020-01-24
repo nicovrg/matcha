@@ -5,15 +5,14 @@ const logErrors = (err, req, res, next) => {
 
 const clientErrorHandler = (err, req, res, next) => {
 	if (req.xhr) {
-		res.status(500).send({ error: 'Fatal error' });
+		res.status(500).json({ error: 'Fatal error' });
 	} else {
 		next(err);
 	}
 };
 
 const errorHandler = (err, req, res, next) => {
-	res.status(500);
-	res.render('error', { error: err });
+	res.status(500).json({ error: err });
 };
 
 export {
