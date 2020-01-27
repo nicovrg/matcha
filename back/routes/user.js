@@ -19,7 +19,7 @@ userRouter.post('/', async (req, res, next) => {
 		if (!user.email || !user.username || !user.password || !user.firstname || !user.lastname) throw new ErrorHandler(400, 'Missing required fields');
 		if (await userExists(user)) throw new ErrorHandler(400, 'User already exists');
 		registerUser(user);
-		res.status(200).json({success: true})
+		res.status(200).json({});
 	} catch (err) {
 		next(err);
 	}
