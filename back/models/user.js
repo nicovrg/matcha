@@ -18,7 +18,7 @@ export const registerUser = async (user) => {
 	const dbSession = session(mode.WRITE);
 	user.password = await bcrypt.hash(user.password, 8)
 	user._id = uuidv1();
-	const query = 'CREATE (u:User { _id: $_id, username: $username, email: $email, password: $password })';
+	const query = 'CREATE (u:User { _id: $_id, username: $username, firstname: $firstname, lastname: $lastname, email: $email, password: $password })';
 	dbSession.session.run(query, user).then(res => {
 		closeBridge(dbSession);
 	}).catch (e => {
@@ -31,7 +31,7 @@ export const verifyUser = async (_id, token) => {
 	const query = 'MATCH (u:User)-[:AUTH]-(t:Token) WHERE u._id = $_id AND t.token = $token RETURN u';
 	return await dbSession.session.run(query, {_id, token}).then(res => {
 		closeBridge(dbSession);
-		let {_id, username, email, password} = res.records[0]._fields[0].properties;
+		let {_id, username, email} = res.records[0]._fields[0].properties;
 		const user = {_id, username, email};
 		return user;
 	}).catch (e => {
@@ -72,6 +72,16 @@ export const generateAuthToken = async (user) => {
 	.catch (e => console.log(e));
 	
 	return token
+}
+
+export const editUser = async (user) => {
+	const dbSession = session(mode.WRITE);
+	const query = `MATCH (u:User) WHERE u._id = $_id SET n={${values}}`;
+	var values = "";
+	for (var key in user) {
+		if (user[key] !== null && user[key] != "" && key != '_id') values += ` u.${key} = $${key}`;
+	}
+	console.log(query);
 }
 
 export const logoutUser = async (token) => {
