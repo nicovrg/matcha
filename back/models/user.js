@@ -31,8 +31,8 @@ export const verifyUser = async (_id, token) => {
 	const query = 'MATCH (u:User)-[:AUTH]-(t:Token) WHERE u._id = $_id AND t.token = $token RETURN u';
 	return await dbSession.session.run(query, {_id, token}).then(res => {
 		closeBridge(dbSession);
-		let {_id, username, email} = res.records[0]._fields[0].properties;
-		const user = {_id, username, email};
+		let {_id, username, firstname, lastname, email, biography, age} = res.records[0]._fields[0].properties;
+		const user = {_id, username, firstname, lastname, email, biography, age};
 		return user;
 	}).catch (e => {
 		console.log(e);
@@ -46,8 +46,8 @@ export const findByCreditentials = async (email, password) => {
 		closeBridge(dbSession);
 		if (res.records.length)
 		{
-			let {_id, username, email, password} = res.records[0]._fields[0].properties;
-			const user = {_id, username, email, password};
+			let {_id, username, firstname, lastname, email, biography, age, password} = res.records[0]._fields[0].properties;
+			const user = {_id, username, firstname, lastname, email, biography, age, password};
 			return user;
 		}
 		return null;
@@ -76,12 +76,20 @@ export const generateAuthToken = async (user) => {
 
 export const editUser = async (user) => {
 	const dbSession = session(mode.WRITE);
-	const query = `MATCH (u:User) WHERE u._id = $_id SET n={${values}}`;
 	var values = "";
 	for (var key in user) {
-		if (user[key] !== null && user[key] != "" && key != '_id') values += ` u.${key} = $${key}`;
+		if (user[key] !== null && user[key] != "" && key != '_id') values += `, ${key}: $${key}`;
 	}
-	console.log(query);
+	values = values.substring(2);
+	const query = `MATCH (u:User) WHERE u._id = $_id SET u += {${values}} RETURN u`;
+	return await dbSession.session.run(query, user)
+	.then(res => {
+		closeBridge(dbSession);
+		let {_id, username, firstname, lastname, email, age, biography} = res.records[0]._fields[0].properties;
+		const user = {_id, username, firstname, lastname, email, age, biography};
+		return user;
+	})
+	.catch (e => console.log(e));
 }
 
 export const logoutUser = async (token) => {

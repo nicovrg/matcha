@@ -51,8 +51,8 @@ userRouter.post('/edit', auth, async (req, res, next) => {
 		if (isEmpty(user)) throw new ErrorHandler(400, "Missing at least one field");
 		
 		user._id = req.user._id;
-		editUser(user);
-		return res.status(200).json({success: true});
+		const editedUser = await editUser(user);
+		return res.status(200).json({user: editedUser});
 	} catch (err) {
 		next(err);
 	}
