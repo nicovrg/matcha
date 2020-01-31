@@ -9,8 +9,6 @@
 	https://www.relevantprogrammer.com/posts/todo-with-react-hooks/	
 	
 	################### IN PROGRESS ###################
-		
-
 
 # React Hooks
 
@@ -38,20 +36,21 @@
 
 # React Basic
 
-	Ok - History {2013 - facebook - opensource - active and huge community}
-	Ok - Web components {a new design}
-	Ok - Jsx and rendering {html in javascript}
-	Ok - Conditional rendering {render what you need for a context}
-	Ok - State and lifecycle {top => bottom: state become props}
-	Ok - State and lifecycle {bottom => top: pass callback from parent to child component}
-	Ok - List and keys {allow react self organize better than with basic index}
-	Ok - Virtual dom {abstract render managment}
-	Ok - Function syntax {render "basic" component without state}
-	Ok - Object syntax {create logic components => constructor, binding, this scope}
-	Ok - Render props {sharing code between components using a prop whose value is a function}
-	Ok - Lift state / higher order component {better design pattern}
-	Ok - Routes {navigate in the app: react router dom}
-	
+	- History {2013 - facebook - opensource - active and huge community}
+	- Web components {a new design}
+	- Jsx and rendering {html in javascript}
+	- Conditional rendering {render what you need for a context}
+	- State and lifecycle {top => bottom: state become props}
+	- State and lifecycle {bottom => top: pass callback from parent to child component}
+	- List and keys {allow react self organize better than with basic index}
+	- Virtual dom {abstract render managment}
+	- Function syntax {render "basic" component without state}
+	- Object syntax {create logic components => constructor, binding, this scope}
+	- Render props {sharing code between components using a prop whose value is a function}
+	- Lift state / higher order component {better design pattern}
+	- Routes {navigate in the app: react router dom}
+	- Context
+
 	Unclear - Hooks {a new design pattern}
 	Unclear - Composition vs inheritance
 
@@ -70,15 +69,7 @@
 	Viewed - Youtube: Hooks in 15 minutes => https://www.youtube.com/watch?v=d9Pndaq9MJs
 	Viewed - Youtube: React router dom tutorial => https://www.youtube.com/watch?v=110dW3l5GQY
 
-# Tools
-
-	Fontawsome: https://fontawesome.com/
-	Bulma: https://bulma.io/
-
 # Questions
-
-	function Example(props) {You can use Hooks here! return ;}
-	const Example = (props) => {You can use Hooks here! return ;}
 
 	this.setState((prevState, props) => ({
 	  color: prevState.color === 'red' ? 'blue' : 'red'
