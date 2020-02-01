@@ -8,6 +8,8 @@ import 'dotenv/config';
 
 import { handleError} from './middleware/errors';
 
+import { generateGenders } from './models/utils';
+
 import userRouter from './routes/user';
 
 import genderRouter from './routes/gender';
@@ -19,6 +21,8 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+generateGenders();
 
 app.use('/user', userRouter);
 app.use('/gender', genderRouter);

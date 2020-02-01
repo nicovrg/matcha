@@ -2,12 +2,13 @@ import { Router } from 'express';
 import auth from '../middleware/auth';
 
 import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll, editUser } from '../models/user';
+import { getGender, setGender, verifyGender} from '../models/gender';
 import { ErrorHandler } from '../middleware/errors';
 import { isEmpty } from '../models/utils';
 
 const userRouter = Router();
 
-userRouter.post('/', async (req, res, next) => {
+userRouter.post('/register', async (req, res, next) => {
 	try {
 		const user = {
 			email: req.body.email,
@@ -60,6 +61,23 @@ userRouter.post('/edit', auth, async (req, res, next) => {
 
 userRouter.get('/me', auth, async (req, res) => {
 		res.status(200).json(req.user);
+})
+
+userRouter.get('/gender', auth, async (req, res) => {
+	const gender = await getGender(req.user);
+	res.status(200).json(gender);
+})
+
+userRouter.post('/gender', auth, async (req, res, next) => {
+	try {
+		const gender = req.body.gender_id;
+		if (!gender || !await verifyGender(gender)) throw new ErrorHandler(400, "Invalid required field");
+		const actualGender = await getGender(req.user);
+		if (actualGender._id != gender) await setGender(req.user, gender);
+		return res.status(200).send();
+	} catch (err) {
+		next(err);
+	}
 })
 
 userRouter.post('/logout', auth, async (req, res) => {
