@@ -8,11 +8,11 @@ import 'dotenv/config';
 
 import { handleError} from './middleware/errors';
 
-import { generateGenders } from './models/utils';
+import { generateGenders, generateHobbies } from './models/utils';
 
 import userRouter from './routes/user';
-
 import genderRouter from './routes/gender';
+import hobbyRouter from './routes/hobby';
 
 var app = express();
 
@@ -23,9 +23,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 generateGenders();
+generateHobbies();
 
 app.use('/user', userRouter);
 app.use('/gender', genderRouter);
+app.use('/hobby', hobbyRouter);
 
 app.use(handleError)
 

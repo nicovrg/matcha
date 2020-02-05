@@ -31,9 +31,13 @@ export const verifyUser = async (_id, token) => {
 	const query = 'MATCH (u:User)-[:AUTH]-(t:Token) WHERE u._id = $_id AND t.token = $token RETURN u';
 	return await dbSession.session.run(query, {_id, token}).then(res => {
 		closeBridge(dbSession);
-		let {_id, username, firstname, lastname, email, biography, age} = res.records[0]._fields[0].properties;
-		const user = {_id, username, firstname, lastname, email, biography, age};
-		return user;
+		if (res.records.length) {
+			let {_id, username, firstname, lastname, email, biography, age} = res.records[0]._fields[0].properties;
+			const user = {_id, username, firstname, lastname, email, biography, age};
+			return user;
+		}
+		else
+			return false
 	}).catch (e => {
 		console.log(e);
 	})

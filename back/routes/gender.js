@@ -7,7 +7,7 @@ const genderRouter = Router();
 
 genderRouter.get('/', auth, async (req, res) => {
 	const Genders = await retriveGenders();
-	res.json(Genders);
+	res.status(200).json(Genders);
 })
 
 export default genderRouter;

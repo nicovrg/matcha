@@ -3,6 +3,7 @@ import auth from '../middleware/auth';
 
 import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll, editUser } from '../models/user';
 import { getGender, setGender, verifyGender} from '../models/gender';
+import { getHobbies, setHobbies, verifyHobbies} from '../models/hobby';
 import { ErrorHandler } from '../middleware/errors';
 import { isEmpty } from '../models/utils';
 
@@ -65,7 +66,10 @@ userRouter.get('/me', auth, async (req, res) => {
 
 userRouter.get('/gender', auth, async (req, res) => {
 	const gender = await getGender(req.user);
-	res.status(200).json(gender);
+	if (gender)
+		return res.status(200).json(gender);
+	else
+		return res.status(200).send();
 })
 
 userRouter.post('/gender', auth, async (req, res, next) => {
@@ -74,6 +78,27 @@ userRouter.post('/gender', auth, async (req, res, next) => {
 		if (!gender || !await verifyGender(gender)) throw new ErrorHandler(400, "Invalid required field");
 		const actualGender = await getGender(req.user);
 		if (actualGender._id != gender) await setGender(req.user, gender);
+		return res.status(200).send();
+	} catch (err) {
+		next(err);
+	}
+})
+
+userRouter.get('/hobby', auth, async (req, res) => {
+	const hobbies = await getHobbies(req.user);
+	if (hobbies)
+		return res.status(200).json(hobbies);
+	else
+		return res.status(200).send();
+})
+
+userRouter.post('/hobby', auth, async (req, res, next) => {
+	try {
+		const hobbies = req.body.hobbies;
+		console.log(hobbies.length)
+		console.log(await verifyHobbies(hobbies));
+		if (!hobbies.length || !await verifyHobbies(hobbies)) throw new ErrorHandler(400, "Invalid required field");
+		await setHobbies(req.user, hobbies);
 		return res.status(200).send();
 	} catch (err) {
 		next(err);

@@ -1,6 +1,4 @@
 import { mode, session, closeBridge } from '../middleware/session'
-import consola from 'consola';
-import { generateGenders } from './utils';
 
 export const initGenders = async (genders) => {
 	const dbSession = session(mode.WRITE);
@@ -37,9 +35,12 @@ export const getGender = async (user) => {
 	const query = 'MATCH (u:User)-[:TYPE]-(g) WHERE u._id = $_id RETURN g';
 	const gender =  await dbSession.session.run(query, {_id: user._id}).then(res => {
 		closeBridge(dbSession)
-		let {_id, name} = res.records[0]._fields[0].properties;
-		const gender = {_id, name};
-		return gender;
+		if (res.records.length) {
+			let {_id, name} = res.records[0]._fields[0].properties;
+			const gender = {_id, name};
+			return gender;
+		}
+		return false;
 	}).catch (e => console.log(e));
 	return gender;
 }
