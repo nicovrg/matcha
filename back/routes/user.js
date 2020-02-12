@@ -4,7 +4,7 @@ import fs from 'fs';
 import auth from '../middleware/auth';
 import upload from '../middleware/pictures';
 
-import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll, editUser, savePicture, getPictures, verifyPicture, deletePicture } from '../models/user';
+import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll, editUser, savePicture, getPictures, verifyPicture, deletePicture, setLocation, getLocation } from '../models/user';
 import { getGender, setGender, verifyGender} from '../models/gender';
 import { getHobbies, setHobbies, verifyHobbies, userHasHooby, unsetHobby} from '../models/hobby';
 import { ErrorHandler } from '../middleware/errors';
@@ -64,6 +64,9 @@ userRouter.post('/edit', auth, async (req, res, next) => {
 })
 
 userRouter.get('/me', auth, async (req, res) => {
+		const location = await getLocation(req.user);
+
+		if (location) req.user.location = location;
 		res.status(200).json(req.user);
 })
 
@@ -167,6 +170,19 @@ userRouter.delete('/picture', auth, async (req, res, next) => {
 		fs.unlinkSync(`./public/images/${picture_name}`);
 		await deletePicture(picture_id);
 		res.status(200).send();
+	} catch (err) {
+		next(err);
+	}
+})
+
+userRouter.post('/location', auth, async (req, res, next) => {
+	try {
+		const {lat, lng} = req.body;
+		if (!lat || !lng) throw new ErrorHandler(400, "Invalid required field");
+		
+		const location = {lat, lng};
+		const newLocation = await setLocation(req.user, location);
+		res.status(200).json(newLocation);
 	} catch (err) {
 		next(err);
 	}

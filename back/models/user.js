@@ -72,7 +72,7 @@ export const findByCreditentials = async (email, password) => {
 export const generateAuthToken = async (user) => {
 	const dbSession = session(mode.WRITE);
 	const token = jwt.sign({_id: user._id}, process.env.JWT_KEY)
-	const query = 'MATCH (u:User) WHERE u._id = $_id CREATE (t:Token {token: $token}) CREATE (t)-[:AUTH]->(u)';
+	const query = 'MATCH (u:User) WHERE u._id = $_id CREATE (t:Token {token: $token}) MERGE (t)-[:AUTH]->(u)';
 	
 	await dbSession.session.run(query, {_id: user._id, token: token}).then(res => closeBridge(dbSession))
 	.catch (e => console.log(e));
@@ -96,6 +96,43 @@ export const editUser = async (user) => {
 		return user;
 	})
 	.catch (e => console.log(e));
+}
+
+export const setLocation = async (user, location) => {
+	const dbSession = session(mode.WRITE);
+	const userLocation = await getLocation(user);
+	
+	if (userLocation) {
+		const query = 'MATCH (u:User)-[:LOCATION]-(l) WHERE u._id = $_id SET l += {lat: $lat, lng: $lng} RETURN l';
+		return await dbSession.session.run(query, {_id: user._id, lat: location.lat, lng: location.lng}).then(res => {
+			closeBridge(dbSession);
+			let {lat, lng} = res.records[0]._fields[0].properties;
+			const location = {lat, lng};
+			return location;
+		}).catch (e => console.log(e));
+	} else {
+		const query = 'MATCH (u:User) WHERE u._id = $_id CREATE (l:Location {lat: $lat, lng: $lng}) MERGE (u)-[:LOCATION]->(l) RETURN l';
+		return await dbSession.session.run(query, {_id: user._id, lat: location.lat, lng: location.lng}).then(res => {
+			closeBridge(dbSession);
+			let {lat, lng} = res.records[0]._fields[0].properties;
+			const location = {lat, lng};
+			return location;
+		}).catch (e => console.log(e));
+	}
+}
+
+export const getLocation = async (user) => {
+	const dbSession = session(mode.READ);
+	const query = 'MATCH (u:User)-[:LOCATION]-(l) WHERE u._id = $_id RETURN l';
+	return await dbSession.session.run(query, user).then(res => {
+		closeBridge(dbSession)
+		if (res.records.length) {
+			let {lat, lng} = res.records[0]._fields[0].properties;
+			const location = {lat, lng};
+			return location;
+		}
+		return false;
+	}).catch (e => console.log(e));
 }
 
 export const logoutUser = async (token) => {
@@ -144,7 +181,7 @@ export const getPictures= async (user) => {
 export const savePicture = async (user, picture_url, picture_name) => {
 	const dbSession = session(mode.WRITE);
 	const values = { _uid: user._id, _id: uuidv1(), url: picture_url, name: picture_name };
-	const query = 'MATCH (u:User) WHERE u._id = $_uid CREATE (p:Picture {_id: $_id, url: $url, name: $name}) CREATE (p)-[:PIC]->(u) RETURN p';
+	const query = 'MATCH (u:User) WHERE u._id = $_uid CREATE (p:Picture {_id: $_id, url: $url, name: $name}) MERGE (p)-[:PIC]->(u) RETURN p';
 
 	const picture = await dbSession.session.run(query, values).then(res => {
 		closeBridge(dbSession)
