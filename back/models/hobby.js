@@ -45,6 +45,16 @@ export const verifyHobbies = async (hobbies) => {
 	return true;
 }
 
+export const userHasHooby = async (user, hobby_id) => {
+	const userHobbies = await getHobbies(user);
+	
+	for (let hobby of userHobbies) {
+		if (hobby._id = hobby_id) return true;
+	}
+
+	return false;
+}
+
 export const getHobbies = async (user) => {
 	const dbSession = session(mode.READ);
 	const query = 'MATCH (u:User)-[:LIKE]-(h) WHERE u._id = $_id RETURN h';
@@ -90,16 +100,21 @@ export const setHobbies = async (user, hobbies) => {
 		if (dbHobbies.length) {
 			for (let dbHobby of dbHobbies) {
 				if (hobby == dbHobby._id) found = true;
-				console.log(found);
 			}
 		}
 		if (!found) {
 			await dbSession.session.run(query, {userId: user._id, hobbyId: hobby})
 			.catch (e => console.log(e));
-			console.log('plop');
 		}
 	}
 	closeBridge(dbSession);
+}
+
+export const unsetHobby = async (user, hobby_id) => {
+	const dbSession = session(mode.WRITE);
+	const query = 'MATCH (u: User)-[r:LIKE]-(h:Hobby) WHERE h._id = $hobby_id AND u._id = $user_id DELETE r ';
+	await dbSession.session.run(query, {hobby_id: hobby_id, user_id: user._id}).then(res => closeBridge(dbSession))
+	.catch (e => console.log(e));
 }
 
 export const addHobby = async (hobby) => {

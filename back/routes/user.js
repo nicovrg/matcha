@@ -1,9 +1,12 @@
 import { Router } from 'express';
-import auth from '../middleware/auth';
+import fs from 'fs';
 
-import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll, editUser } from '../models/user';
+import auth from '../middleware/auth';
+import upload from '../middleware/pictures';
+
+import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll, editUser, savePicture, getPictures, verifyPicture, deletePicture } from '../models/user';
 import { getGender, setGender, verifyGender} from '../models/gender';
-import { getHobbies, setHobbies, verifyHobbies} from '../models/hobby';
+import { getHobbies, setHobbies, verifyHobbies, userHasHooby, unsetHobby} from '../models/hobby';
 import { ErrorHandler } from '../middleware/errors';
 import { isEmpty } from '../models/utils';
 
@@ -78,7 +81,8 @@ userRouter.post('/gender', auth, async (req, res, next) => {
 		if (!gender || !await verifyGender(gender)) throw new ErrorHandler(400, "Invalid required field");
 		const actualGender = await getGender(req.user);
 		if (actualGender._id != gender) await setGender(req.user, gender);
-		return res.status(200).send();
+		
+		res.status(200).send();
 	} catch (err) {
 		next(err);
 	}
@@ -95,11 +99,22 @@ userRouter.get('/hobby', auth, async (req, res) => {
 userRouter.post('/hobby', auth, async (req, res, next) => {
 	try {
 		const hobbies = req.body.hobbies;
-		console.log(hobbies.length)
-		console.log(await verifyHobbies(hobbies));
 		if (!hobbies.length || !await verifyHobbies(hobbies)) throw new ErrorHandler(400, "Invalid required field");
+		
 		await setHobbies(req.user, hobbies);
 		return res.status(200).send();
+	} catch (err) {
+		next(err);
+	}
+})
+
+userRouter.delete('/hobby', auth, async (req, res, next) => {
+	try {
+		const hobby_id = req.body._id;
+		if (!hobby_id || !await verifyHobbies([hobby_id]) || !await userHasHooby(req.user, hobby_id)) throw new ErrorHandler(400, "Invalid required field");
+		
+		await unsetHobby(req.user, hobby_id);
+		res.status(200).send();
 	} catch (err) {
 		next(err);
 	}
@@ -113,6 +128,48 @@ userRouter.post('/logout', auth, async (req, res) => {
 userRouter.post('/logout/all', auth, async (req, res) => {
 	await logoutAll(req.user);
 	res.status(200).json({success: true});
+})
+
+userRouter.post('/picture', [auth, upload.single('picture')], async (req, res, next) => {
+	try {
+		if(!req.file) throw new ErrorHandler(400, "Invalid required field");
+		const dbPictures = await getPictures(req.user);
+		if (dbPictures && dbPictures.length >= 5) {
+			fs.unlinkSync(`./public/images/${req.file.filename}`);
+			throw new ErrorHandler(400, "You can't upload more than 5 pictures");
+		}
+		const url = `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+		const picture = await savePicture(req.user, url, req.file.filename);
+
+		res.status(200).json(picture);
+	} catch (err) {
+		next(err);
+	}
+})
+
+userRouter.get('/picture', auth, async (req, res, next) => {
+	try {
+		const pictures = await getPictures(req.user);
+		res.status(200).json(pictures);
+	} catch (err) {
+		next(err);
+	}
+})
+
+userRouter.delete('/picture', auth, async (req, res, next) => {
+	try {
+		const picture_id = req.body._id;
+		if (!picture_id) throw new ErrorHandler(400, "Invalid required field");
+		
+		const picture_name = await verifyPicture(req.user, picture_id)
+		if (!picture_name) throw new ErrorHandler(400, "Invalid picture id");
+
+		fs.unlinkSync(`./public/images/${picture_name}`);
+		await deletePicture(picture_id);
+		res.status(200).send();
+	} catch (err) {
+		next(err);
+	}
 })
 
 export default userRouter;

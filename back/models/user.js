@@ -1,7 +1,9 @@
 import uuidv1 from 'uuid/v1';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-import { mode, session, closeBridge } from '../middleware/session'
+import fs from 'fs';
+
+import { mode, session, closeBridge } from '../middleware/session';
 
 export const userExists = async (user) => {
 	const dbSession = session(mode.READ);
@@ -107,5 +109,56 @@ export const logoutAll = async (user) => {
 	const dbSession = session(mode.READ);
 	const query = 'MATCH (u:User) WHERE u._id = $_id MATCH (u)-[a:AUTH]-(t) DELETE t, a';
 	await dbSession.session.run(query, {_id: user._id}).then(res => closeBridge(dbSession))
+	.catch (e => console.log(e));
+}
+
+export const verifyPicture = async (user, picture_id) => {
+	const pictures= await getPictures(user);
+
+	for (let picture of pictures) {
+		console.log(picture);
+		if (picture_id == picture._id) return picture.name;
+	}
+	return false;
+}
+
+export const getPictures= async (user) => {
+	const dbSession = session(mode.READ);
+	const query = 'MATCH (u:User) WHERE u._id = $_id MATCH (u)-[:PIC]-(p) RETURN p';
+	const pictures = await dbSession.session.run(query, {_id: user._id}).then(res => {
+		closeBridge(dbSession);
+		const pictures = [];
+		if (res.records.length) {
+			for (let record of res.records) {
+				let {_id, url, name} = record._fields[0].properties;
+				const picture = {_id, url, name};
+				pictures.push(picture);
+			}
+			return pictures;
+		}
+	}).catch (e => console.log(e));
+
+	return pictures;
+}
+
+export const savePicture = async (user, picture_url, picture_name) => {
+	const dbSession = session(mode.WRITE);
+	const values = { _uid: user._id, _id: uuidv1(), url: picture_url, name: picture_name };
+	const query = 'MATCH (u:User) WHERE u._id = $_uid CREATE (p:Picture {_id: $_id, url: $url, name: $name}) CREATE (p)-[:PIC]->(u) RETURN p';
+
+	const picture = await dbSession.session.run(query, values).then(res => {
+		closeBridge(dbSession)
+		const { _id, url, name } = res.records[0]._fields[0].properties;
+		const picture = { _id, url, name }
+		return picture
+	}).catch (e => console.log(e));
+	
+	return picture;
+}
+
+export const deletePicture = async (picture_id) => {
+	const dbSession = session(mode.WRITE);
+	const query = 'MATCH (p:Picture)-[r:PIC]-() WHERE p._id = $_id DELETE p,r ';
+	await dbSession.session.run(query, {_id: picture_id}).then(res => closeBridge(dbSession))
 	.catch (e => console.log(e));
 }
