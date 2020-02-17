@@ -34,8 +34,8 @@ export const verifyUser = async (_id, token) => {
 	return await dbSession.session.run(query, {_id, token}).then(res => {
 		closeBridge(dbSession);
 		if (res.records.length) {
-			let {_id, username, firstname, lastname, email, biography, age} = res.records[0]._fields[0].properties;
-			const user = {_id, username, firstname, lastname, email, biography, age};
+			let {_id, username, firstname, lastname, email, biography, birthdate} = res.records[0]._fields[0].properties;
+			const user = {_id, username, firstname, lastname, email, biography, birthdate};
 			return user;
 		}
 		else
@@ -52,8 +52,8 @@ export const findByCreditentials = async (email, password) => {
 		closeBridge(dbSession);
 		if (res.records.length)
 		{
-			let {_id, username, firstname, lastname, email, biography, age, password} = res.records[0]._fields[0].properties;
-			const user = {_id, username, firstname, lastname, email, biography, age, password};
+			let {_id, username, firstname, lastname, email, biography, birthdate, password} = res.records[0]._fields[0].properties;
+			const user = {_id, username, firstname, lastname, email, biography, birthdate, password};
 			return user;
 		}
 		return null;
@@ -68,6 +68,22 @@ export const findByCreditentials = async (email, password) => {
 		return user;
 	}
 }
+
+export const getToken = async (user) => {
+	const dbSession = session(mode.READ);
+	const query = 'MATCH (u:User)-[a:AUTH]-(t) WHERE u._id = $_id RETURN t';
+	return await dbSession.session.run(query, user).then(res => {
+		closeBridge(dbSession);
+		if (res.records.length)
+		{
+			let { token } = res.records[0]._fields[0].properties;
+			return token
+		}
+		return null;
+	}).catch (e => {
+		console.log(e);
+	})
+} 
 
 export const generateAuthToken = async (user) => {
 	const dbSession = session(mode.WRITE);
@@ -91,8 +107,8 @@ export const editUser = async (user) => {
 	return await dbSession.session.run(query, user)
 	.then(res => {
 		closeBridge(dbSession);
-		let {_id, username, firstname, lastname, email, age, biography} = res.records[0]._fields[0].properties;
-		const user = {_id, username, firstname, lastname, email, age, biography};
+		let {_id, username, firstname, lastname, email, birthdate, biography} = res.records[0]._fields[0].properties;
+		const user = {_id, username, firstname, lastname, email, birthdate, biography};
 		return user;
 	})
 	.catch (e => console.log(e));
@@ -199,3 +215,20 @@ export const deletePicture = async (picture_id) => {
 	await dbSession.session.run(query, {_id: picture_id}).then(res => closeBridge(dbSession))
 	.catch (e => console.log(e));
 }
+
+// export const searchUsers = async (user, filters) => {
+// 	const dbSession = session(mode.READ);
+// 	if (filters.birthdate) {
+// 		const minAge = filters.birthdate.min ? filters.birthdate.min : 0;
+// 		const maxAge = filters.birthdate.max ? filters.birthdate.max : 0;
+// 		const ageQuery = 'MATCH (u:User) WHERE n.birthdate >= $minAge AND n.birthdate <= $maxAge RETURN u';
+// 		await dbSession.session.run(query, {minAge, maxAge}).then(res => {
+// 			closeBridge(dbSession)
+// 			if (res.records.length) {
+// 				for (let record in res.records) {
+// 					let {_id, username, firstname, lastname, email, biography, birthdate, password}
+// 				}
+// 			}
+// 		}).catch (e => console.log(e));
+// 	}
+// }

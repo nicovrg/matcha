@@ -4,13 +4,25 @@ import fs from 'fs';
 import auth from '../middleware/auth';
 import upload from '../middleware/pictures';
 
-import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll, editUser, savePicture, getPictures, verifyPicture, deletePicture, setLocation, getLocation } from '../models/user';
+import { userExists, registerUser, findByCreditentials, generateAuthToken, logoutUser, logoutAll, editUser, savePicture, getPictures, verifyPicture, deletePicture, setLocation, getLocation, getToken } from '../models/user';
 import { getGender, setGender, verifyGender} from '../models/gender';
 import { getHobbies, setHobbies, verifyHobbies, userHasHooby, unsetHobby} from '../models/hobby';
 import { ErrorHandler } from '../middleware/errors';
 import { isEmpty } from '../models/utils';
 
 const userRouter = Router();
+
+userRouter.get('/', auth, async (req, res, next) => {
+	try {
+		const {age, popularity, location, hobbies } = req.body;
+		const filters = { age, popularity, location, hobbies };
+		if (isEmpty(filters)) throw new ErrorHandler(400, 'You need at least one parameter');
+
+		
+	} catch (err) {
+		next(err);
+	}
+})
 
 userRouter.post('/register', async (req, res, next) => {
 	try {
@@ -36,7 +48,8 @@ userRouter.post('/login', async (req, res, next) => {
 		if (!email || !password) throw new ErrorHandler(400, 'Missing required fields');
 		const user = await findByCreditentials(email, password);
 		if (!user) throw new ErrorHandler(401, 'Login failed! Check authentication credentials');
-		const token = await generateAuthToken(user);
+		let token = await getToken(user);
+		if (!token) token = await generateAuthToken(user);
 		return res.status(200).json({user, token});
 	} catch (err) {
 		next(err);
@@ -51,10 +64,12 @@ userRouter.post('/edit', auth, async (req, res, next) => {
 			lastname: req.body.lastname ? req.body.lastname : null,
 			username: req.body.username ? req.body.username : null,
 			biography: req.body.biography ? req.body.biography : null,
-			age: req.body.age ? req.body.age : null
+			birthdate: req.body.birthdate ? req.body.birthdate : null
 		}
 		if (isEmpty(user)) throw new ErrorHandler(400, "Missing at least one field");
-		
+		if (user.birthdate)
+			if (!user.birthdate.match(/(19|20)\d\d-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])/g))
+				throw new ErrorHandler(400, 'Date should be in format YYYY-MM-DD');
 		user._id = req.user._id;
 		const editedUser = await editUser(user);
 		return res.status(200).json({user: editedUser});
