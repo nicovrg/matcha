@@ -215,20 +215,3 @@ export const deletePicture = async (picture_id) => {
 	await dbSession.session.run(query, {_id: picture_id}).then(res => closeBridge(dbSession))
 	.catch (e => console.log(e));
 }
-
-// export const searchUsers = async (user, filters) => {
-// 	const dbSession = session(mode.READ);
-// 	if (filters.birthdate) {
-// 		const minAge = filters.birthdate.min ? filters.birthdate.min : 0;
-// 		const maxAge = filters.birthdate.max ? filters.birthdate.max : 0;
-// 		const ageQuery = 'MATCH (u:User) WHERE n.birthdate >= $minAge AND n.birthdate <= $maxAge RETURN u';
-// 		await dbSession.session.run(query, {minAge, maxAge}).then(res => {
-// 			closeBridge(dbSession)
-// 			if (res.records.length) {
-// 				for (let record in res.records) {
-// 					let {_id, username, firstname, lastname, email, biography, birthdate, password}
-// 				}
-// 			}
-// 		}).catch (e => console.log(e));
-// 	}
-// }
